@@ -1,3 +1,4 @@
 {
-    "python.pythonPath": "c:\\Users\\Lizard Empress\\Documents\\Code\\pennapps-2020\\env\\Scripts\\python.exe"
+    "python.pythonPath": "c:\\Users\\Lizard Empress\\Documents\\Code\\pennapps-2020\\env\\Scripts\\python.exe",
+    "python.linting.pylintArgs": ["--generate-members"]
 }

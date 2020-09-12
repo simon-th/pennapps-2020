@@ -26,5 +26,12 @@ from skimage.color import rgb2lab, deltaE_cie76
 import os
 
 #%matplotlib inline # for ipython
-image = cv2.imread('sam.jpg')
-breakpoint()
+image = cv2.imread('sam.jpg') # linting issue fixed in settings
+
+print("The type of this input is {}".format(type(image))) # as numpy.ndarray
+
+print("Shape: {}".format(image.shape)) # 2 dims and teh 3rd is the RGB dimension
+
+image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB) # convert to rgb instead of grb
+
+#breakpoint()
