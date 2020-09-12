@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
+import qs from "qs";
 import Button from "@material-ui/core/Button";
 import { storage } from "./firebase";
 import "./App.css";
@@ -40,6 +41,11 @@ class App extends Component {
           .child(this.state.image.name)
           .getDownloadURL()
           .then((url) => {
+            const query_string = qs.stringify({
+              image_url: url, // TODO: Pass in selected playlists
+              playlists: ["dummy"],
+            });
+            axios.post(`/create_playlist?${query_string}`);
             console.log(url);
           });
       }
