@@ -1,13 +1,19 @@
-import React from "react";
+import React, { Component } from "react";
 import axios from "axios";
+import Button from "@material-ui/core/Button";
+import { storage } from "./firebase";
 import "./App.css";
 
-class App extends React.Component {
+class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
       isLoggedIn: false,
+      user: null,
+      image: null,
     };
+    this.handleChange = this.handleChange.bind(this);
+    this.upload = this.upload.bind(this);
   }
 
   async login() {
@@ -18,8 +24,39 @@ class App extends React.Component {
     window.location.replace("http://localhost:5000/logout");
   }
 
+  async upload() {
+    const uploadTask = storage
+      .ref(`images/${this.state.image.name}`)
+      .put(this.state.image);
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {},
+      (error) => {
+        console.error(error);
+      },
+      () => {
+        storage
+          .ref("images")
+          .child(this.state.image.name)
+          .getDownloadURL()
+          .then((url) => {
+            console.log(url);
+          });
+      }
+    );
+  }
+
+  async handleChange(event) {
+    if (event.target.files[0]) {
+      await this.setState({
+        image: event.target.files[0],
+      });
+      console.log(this.state.image);
+    }
+  }
+
   async componentDidMount() {
-    // this.login();
+    // TODO: Replace localhost with Firebase hosted site URL
     const params = new URLSearchParams(
       window.location.href.replace("http://localhost:3000/?", "")
     );
@@ -28,7 +65,7 @@ class App extends React.Component {
         .get("/get_user")
         .then(async (result) => {
           console.log(result.data);
-          await this.setState({
+          this.setState({
             isLoggedIn: true,
             user: result.data,
           });
@@ -37,8 +74,9 @@ class App extends React.Component {
           console.error(err);
         });
     } else if (params.has("logout")) {
-      await this.setState({
+      this.setState({
         isLoggedIn: false,
+        user: null,
       });
     }
   }
@@ -46,17 +84,26 @@ class App extends React.Component {
   render() {
     let link;
     let welcome;
+    let upload;
+
     if (this.state.isLoggedIn) {
       welcome = <p>Welcome {this.state.user.display_name}!</p>;
-      link = <p onClick={this.logout}>Logout</p>;
+      upload = (
+        <div>
+          <input type="file" onChange={this.handleChange} />;
+          <Button onClick={this.upload}>Upload</Button>;
+        </div>
+      );
+      link = <Button onClick={this.logout}>Logout</Button>;
     } else {
-      link = <p onClick={this.login}>Login</p>;
+      link = <Button onClick={this.login}>Login</Button>;
     }
 
     return (
       <div className="App">
         <header className="App-header">
           {welcome}
+          {upload}
           {link}
         </header>
       </div>
