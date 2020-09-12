@@ -52,6 +52,7 @@ def rgb_to_hex(color):
     r = int(color[0])
     g = int(color[1])
     b = int(color[2])
+
     return "#{:02x}{:02x}{:02x}".format(r,g,b)
 
 # reads image into RGB color space - condenses what we had above
@@ -73,34 +74,39 @@ to the cluster with the nearest mean (cluster centers or cluster centroid),
 serving as a prototype of the cluster"""
 
 # resize image so not that many pixels to iterate through:
+# not sure what interarea is but it = 3
 mod_im = cv2.resize(image, (400, 400), interpolation = cv2.INTER_AREA)
 
 mod_im = mod_im.reshape(mod_im.shape[0]*mod_im.shape[1], 3)
 
-clf = KMeans(n_clusters = 8) # just use default clusters
+kmean_obj = KMeans(n_clusters = 8) # just use default clusters
 
-labels = clf.fit_predict(mod_im) #label with fit predict
-
-# question is = what color corresponds with what - 1,2,3...8
-counts = Counter(labels) # partititions data into different fit_pred sections
-
-# sort to ensure correct color percentage
-counts = dict(sorted(counts.items()))
-#print(counts) # all clusters.
+# fit predict groups all members in a different clusters in KMean
+sections = kmean_obj.fit_predict(mod_im) # label with fit predict
 
 # The center of the cluster is the average of all points (elements) that belong to that cluster
-center_colors = clf.cluster_centers_
+center_clust = kmean_obj.cluster_centers_
 # gives us weighted RGBs of each cluster :) 8 different lists
 #print(center_colors)
 
-# We get ordered colors by iterating through the keys
-ordered_colors = [center_colors[i] for i in counts.keys()]
+# question is = what color corresponds with what - 1,2,3...num clus = 8
+ct = Counter(sections) # partititions data into different fit_pred sections
+# turns count of sections and members into ordered dictionary :)
+ct = dict(sorted(ct.items()))
+#print(counts) # all clusters.
+
+
+# order color sections by iterating through keys in the count dictionary
+sorted_list = [center_clust[i] for i in ct.keys()]
 #breakpoint()
-hex_colors = [rgb_to_hex(ordered_colors[i]) for i in counts.keys()]
-rgb_colors = [ordered_colors[i] for i in counts.keys()]
+hex_colors = [rgb_to_hex(sorted_list[i]) for i in ct.keys()]
+rgb_colors = [sorted_list[i] for i in ct.keys()]
 print(rgb_colors)
 
 plt.figure(figsize = (8, 6))
 plt.pie(counts.values(), labels = hex_colors, colors = hex_colors)
 plt.show()
 
+# tempo prototype
+# must be between 0 and 1 
+# should just average the 8 sections and correspond to color
