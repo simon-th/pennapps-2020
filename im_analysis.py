@@ -56,17 +56,60 @@ def get_image(image_path):
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     return image
 
-# resize image so not that many pixels to iterate through:
-mod_im = cv2.resize(image, (400, 400), interpolation = cv2.INTER_AREA)
-#breakpoint()
-mod_im = mod_im.reshape(mod_im.shape[0]*mod_im.shape[1], 3)
-#breakpoint()
+
 
 # mod_im now holds smaller color range values
-"""K Means Algo:
+"""K Means Algo: from Wikipedia:
 k-means clustering is a method of vector quantization, 
 originally from signal processing, that aims to partition 
 n observations into k clusters in which each observation belongs 
 to the cluster with the nearest mean (cluster centers or cluster centroid), 
 serving as a prototype of the cluster"""
 
+# resize image so not that many pixels to iterate through:
+mod_im = cv2.resize(image, (400, 400), interpolation = cv2.INTER_AREA)
+
+mod_im = mod_im.reshape(mod_im.shape[0]*mod_im.shape[1], 3)
+
+clf = KMeans(n_clusters = 8) # just use default clusters
+
+labels = clf.fit_predict(mod_im) #label with fit predict
+
+# question is = what color corresponds with what - 1,2,3...8
+counts = Counter(labels) # partititions data into different fit_pred sections
+
+# sort to ensure correct color percentage
+counts = dict(sorted(counts.items()))
+
+""""
+def get_colors(image, number_of_colors, show_chart):
+    
+    modified_image = cv2.resize(image, (400, 400), interpolation = cv2.INTER_AREA)
+    modified_image = modified_image.reshape(modified_image.shape[0]*modified_image.shape[1], 3)
+    
+    # user decides how many clusters to use for n choose K means
+    clf = KMeans(n_clusters = number_of_colors)
+
+    # predict closest cluster each sample belongs to
+    # carefuly not to apply too many times
+    # each time yields futher predict fit?
+    # WARNING do not use huge num of colors - use default 8 clusters
+    labels = clf.fit_predict(modified_image)
+    
+
+    counts = Counter(labels)
+    # sort to ensure correct color percentage
+    counts = dict(sorted(counts.items()))
+    
+    center_colors = clf.cluster_centers_
+    # We get ordered colors by iterating through the keys
+    ordered_colors = [center_colors[i] for i in counts.keys()]
+    hex_colors = [RGB2HEX(ordered_colors[i]) for i in counts.keys()]
+    rgb_colors = [ordered_colors[i] for i in counts.keys()]
+
+    if (show_chart):
+        plt.figure(figsize = (8, 6))
+        plt.pie(counts.values(), labels = hex_colors, colors = hex_colors)
+    
+    return rgb_colors
+"""
