@@ -84,8 +84,17 @@ counts = dict(sorted(counts.items()))
 
 # The center of the cluster is the average of all points (elements) that belong to that cluster
 center_colors = clf.cluster_centers_
-# gives us weighted RGBs of each cluster :)
-print(center_colors)
+# gives us weighted RGBs of each cluster :) 8 different lists
+#print(center_colors)
+
+# We get ordered colors by iterating through the keys
+ordered_colors = [center_colors[i] for i in counts.keys()]
+#breakpoint()
+#hex_colors = [RGB2HEX(ordered_colors[i]) for i in counts.keys()]
+rgb_colors = [ordered_colors[i] for i in counts.keys()]
+print(rgb_colors)
+
+
 """"
 def get_colors(image, number_of_colors, show_chart):
     
