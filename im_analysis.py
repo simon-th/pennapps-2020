@@ -37,7 +37,7 @@ print("Shape: {}".format(image.shape)) # 2 dims and teh 3rd is the RGB dimension
 image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB) # convert to rgb instead of grb
 
 plt.imshow(image) 
-plt.show() #show the image
+#plt.show() #show the image
 
 # to resize image in future:
 # resized_image = cv2.resize(image, (1200, 600))
@@ -80,7 +80,12 @@ counts = Counter(labels) # partititions data into different fit_pred sections
 
 # sort to ensure correct color percentage
 counts = dict(sorted(counts.items()))
+#print(counts) # all clusters.
 
+# The center of the cluster is the average of all points (elements) that belong to that cluster
+center_colors = clf.cluster_centers_
+# gives us weighted RGBs of each cluster :)
+print(center_colors)
 """"
 def get_colors(image, number_of_colors, show_chart):
     
