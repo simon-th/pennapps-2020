@@ -1,42 +1,44 @@
 # https://pillow.readthedocs.io/en/stable/handbook/tutorial.html#more-on-reading-images
 """
-# this was the first attempt lol
-
+# this was the first attempt lol - dint work
 import urllib.request
 import PIL
 from PIL import Image
 #breakpoint()
-
 # get image
 #image_url='https://imgur.com/a/KcK0oKQ.png'
 image_url='https://imgur.com/a/7wAlncp'
-
 urllib.request.urlretrieve(image_url, "im.jpg")
 #breakpoint()
 img = PIL.Image.open("im.jpg")
 # show im
 img.show()
 """
-# clustering 
+# Import KMeans from SciKit Learn cluster lib 
 from sklearn.cluster import KMeans
+# for plotting
 import matplotlib.pyplot as plt
+# turn image into array
 import numpy as np
 # computer vision
 import cv2
+# use dictionary to count cluster members at the end
 from collections import Counter
+# use skimage to convert to hex and rgb2
 from skimage.color import rgb2lab, deltaE_cie76
 import os
 
-#%matplotlib inline # for ipython
+
+# set image to array read in by opencv
 image = cv2.imread('sam.jpg') # linting issue fixed in settings
 
-print("The type of this input is {}".format(type(image))) # as numpy.ndarray
+#print("The type of this input is {}".format(type(image))) # as numpy.ndarray
+#print("Shape: {}".format(image.shape)) # 2 dims and teh 3rd is the RGB dimension
 
-print("Shape: {}".format(image.shape)) # 2 dims and teh 3rd is the RGB dimension
-
+# use cv2 to convert to R-G-B, default is B-R-G
 image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB) # convert to rgb instead of grb
 
-plt.imshow(image) 
+plt.imshow(image) # make image pop up - remove later on
 #plt.show() #show the image
 
 # to resize image in future:
@@ -45,8 +47,12 @@ plt.imshow(image)
 
 """Color Identification Section"""
 #converts labels from RGB to HEX
-def RGB2HEX(color):
-    return "#{:02x}{:02x}{:02x}".format(int(color[0]), int(color[1]), int(color[2]))
+# takes in a list of 3 for rgb
+def rgb_to_hex(color):
+    r = int(color[0])
+    g = int(color[1])
+    b = int(color[2])
+    return "#{:02x}{:02x}{:02x}".format(r,g,b)
 
 # reads image into RGB color space - condenses what we had above
 def get_image(image_path):
@@ -90,7 +96,7 @@ center_colors = clf.cluster_centers_
 # We get ordered colors by iterating through the keys
 ordered_colors = [center_colors[i] for i in counts.keys()]
 #breakpoint()
-hex_colors = [RGB2HEX(ordered_colors[i]) for i in counts.keys()]
+hex_colors = [rgb_to_hex(ordered_colors[i]) for i in counts.keys()]
 rgb_colors = [ordered_colors[i] for i in counts.keys()]
 print(rgb_colors)
 
@@ -98,36 +104,3 @@ plt.figure(figsize = (8, 6))
 plt.pie(counts.values(), labels = hex_colors, colors = hex_colors)
 plt.show()
 
-
-""""
-def get_colors(image, number_of_colors, show_chart):
-    
-    modified_image = cv2.resize(image, (400, 400), interpolation = cv2.INTER_AREA)
-    modified_image = modified_image.reshape(modified_image.shape[0]*modified_image.shape[1], 3)
-    
-    # user decides how many clusters to use for n choose K means
-    clf = KMeans(n_clusters = number_of_colors)
-
-    # predict closest cluster each sample belongs to
-    # carefuly not to apply too many times
-    # each time yields futher predict fit?
-    # WARNING do not use huge num of colors - use default 8 clusters
-    labels = clf.fit_predict(modified_image)
-    
-
-    counts = Counter(labels)
-    # sort to ensure correct color percentage
-    counts = dict(sorted(counts.items()))
-    
-    center_colors = clf.cluster_centers_
-    # We get ordered colors by iterating through the keys
-    ordered_colors = [center_colors[i] for i in counts.keys()]
-    hex_colors = [RGB2HEX(ordered_colors[i]) for i in counts.keys()]
-    rgb_colors = [ordered_colors[i] for i in counts.keys()]
-
-    if (show_chart):
-        plt.figure(figsize = (8, 6))
-        plt.pie(counts.values(), labels = hex_colors, colors = hex_colors)
-    
-    return rgb_colors
-"""
