@@ -1,15 +1,26 @@
 import React from "react";
 import axios from "axios";
 import "./App.css";
+import { Genre } from './Genre';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       isLoggedIn: false,
+      genre: ''
+
+
+
     };
+    this.changeGenre = this.changeGenre.bind(this);
   }
 
+  changeGenre(newGenre) {
+      this.setState({
+        genre: newGenre
+      });
+  }
   async login() {
     window.location.replace("http://localhost:5000/login");
   }
@@ -46,6 +57,8 @@ class App extends React.Component {
   render() {
     let link;
     let welcome;
+    let logo = <img src={require('assets/logo.png')} alt="Logo" />
+    let message = <p>What does your picture sing?</p>
     if (this.state.isLoggedIn) {
       welcome = <p>Welcome {this.state.user.display_name}!</p>;
       link = <p onClick={this.logout}>Logout</p>;
@@ -55,11 +68,17 @@ class App extends React.Component {
 
     return (
       <div className="App">
+
         <header className="App-header">
+          {logo}
+          {message}
           {welcome}
           {link}
         </header>
+
+      <Genre onChange={this.changeName} />
       </div>
+
     );
   }
 }
