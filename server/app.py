@@ -118,9 +118,10 @@ def create_playlist():
     sp.user_playlist_create(user_id, "Image to Music Playlist", public=False,
                             collaborative=False, description=gen_descr)
     playlist_id = get_playlist_id_by_name("Image to Music Playlist", sp.current_user_playlists())
+    # sp.playlist_upload_cover(playlist_id, _) need base64 encoded jpg as second arg
 
     ''' Hook up values from image analysis here '''
-    # songs = sort_songs(get_image_tempo(), get_image_danceability())  
+    # songs = sort_songs(get_image_tempo(), get_image_danceability())
     # sp.playlist_add_items(playlist_id, songs)
     # return the playlist
 
