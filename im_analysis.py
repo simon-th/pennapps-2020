@@ -45,8 +45,8 @@ plt.imshow(image)
 
 """Color Identification Section"""
 #converts labels from RGB to HEX
-#def RGB2HEX(color):
-    #return "#{:02x}{:02x}{:02x}".format(int(color[0]), int(color[1]), int(color[2]))
+def RGB2HEX(color):
+    return "#{:02x}{:02x}{:02x}".format(int(color[0]), int(color[1]), int(color[2]))
 
 # reads image into RGB color space - condenses what we had above
 def get_image(image_path):
@@ -90,9 +90,13 @@ center_colors = clf.cluster_centers_
 # We get ordered colors by iterating through the keys
 ordered_colors = [center_colors[i] for i in counts.keys()]
 #breakpoint()
-#hex_colors = [RGB2HEX(ordered_colors[i]) for i in counts.keys()]
+hex_colors = [RGB2HEX(ordered_colors[i]) for i in counts.keys()]
 rgb_colors = [ordered_colors[i] for i in counts.keys()]
 print(rgb_colors)
+
+plt.figure(figsize = (8, 6))
+plt.pie(counts.values(), labels = hex_colors, colors = hex_colors)
+plt.show()
 
 
 """"
