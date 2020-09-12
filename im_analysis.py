@@ -34,4 +34,14 @@ print("Shape: {}".format(image.shape)) # 2 dims and teh 3rd is the RGB dimension
 
 image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB) # convert to rgb instead of grb
 
-#breakpoint()
+plt.imshow(image) 
+plt.show() #show the image
+
+# to resize image in future:
+# resized_image = cv2.resize(image, (1200, 600))
+#plt.imshow(resized_image)
+
+"""Color Identification Section"""
+#converts labels from RGB to HEX
+#def RGB2HEX(color):
+    #return "#{:02x}{:02x}{:02x}".format(int(color[0]), int(color[1]), int(color[2]))
