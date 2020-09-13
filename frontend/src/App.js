@@ -127,6 +127,7 @@ class App extends Component {
 
           "font-size": "40px", top:"0px", "margin-bottom": "20px", "margin-right": "5px", "margin-left": "5px", "border": "2px solid black"}} onClick={this.upload}>Upload</Button>
         </div>
+        //playlist
         <img src={this.imageURL} alt='image' className="image bottomright"/>;
         </span>
       );
