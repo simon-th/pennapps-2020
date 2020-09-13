@@ -59,7 +59,7 @@ class App extends Component {
             });
             console.log(url);
 
-            //setURL(url);
+            this.setURL(url);
           });
       }
     );
