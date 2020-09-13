@@ -108,7 +108,7 @@ def create_playlist():
 
     data = json.loads(request.data.decode('UTF-8'))
     image_url = data['image_url']   # Image URL from Firebase Storage
-    playlists = data['playlists']   # List of playlist IDs
+    playlists = sp.current_user_playlists()   # List of playlist IDs
     # TODO: Dummy playlists work! Change to above though
     # playlists = ["spotify:playlist:048no6E8ZLciZ8ZiiPdHy3", "spotify:playlist:1sAGSgV8Ww5tFCG7JSWLr6"]
 

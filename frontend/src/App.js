@@ -43,23 +43,6 @@ class App extends Component {
     window.location.replace("http://localhost:5000/logout");
   }
 
-  get_all_playlists_ids() {
-      fetch("/get_playlists").then(response =>
-        response.json().then(data => {
-          this.setPlaylistIDs(data.items);
-        })
-      );
-    }
-
-
-
-    setPlaylistIDs(items) {
-  items.forEach(el => {
-  this.playlistIDs.push(el.id);
-})
-
-}
-
 
   async upload() {
     const uploadTask = storage
@@ -79,7 +62,7 @@ class App extends Component {
           .then((url) => {
             axios.post(`/create_playlist`, {
               image_url: url, // TODO: Pass in selected playlists
-              playlists: this.playlistIDs,
+              playlists: ["dummy"],
             }).then(response =>
               response.json().then(data => {
                 this.recommendations = data;
@@ -173,22 +156,13 @@ class App extends Component {
         </span>
       );
 
-
-
-
-
-
-
-
-
       link = <Button style={{background: "white", "border-radius": "8px", color: "black", "font-family": "sans-serif",
 
       "font-size": "10px", "bottom": "0px"}} onClick={this.logout}>Logout</Button>;
     } else {
       message = <p className = "message">What does your picture sing?</p>;
       link = <Button style={{background: "white", "border-radius": "8px", color: "black", "font-family": "sans-serif",
-
-      "font-size": "40px", top:"0px", bottom: "00px"}} onClick={this.login}>Login to Spotify♩</Button>;
+      "font-size": "40px", top:"0px", bottom: "0px"}} onClick={this.login}>Login to Spotify♩</Button>;
     }
 
 
