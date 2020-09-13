@@ -109,6 +109,10 @@ def create_playlist():
     data = json.loads(request.data.decode('UTF-8'))
     image_url = data['image_url']   # Image URL from Firebase Storage
     playlists = sp.current_user_playlists()   # List of playlist IDs
+    playlist_ids = []
+    for playlist in playlists['items']:
+        playlist_ids.append(playlist['id'])
+
     # TODO: Dummy playlists work! Change to above though
     # playlists = ["spotify:playlist:048no6E8ZLciZ8ZiiPdHy3", "spotify:playlist:1sAGSgV8Ww5tFCG7JSWLr6"]
 
@@ -117,7 +121,7 @@ def create_playlist():
 
     tr_tmp = set()
     ''' Gets all track audio features from selected playlist ids'''
-    for pl_id in playlists:
+    for pl_id in playlist_ids:
          pl_content = sp.playlist_items(pl_id, fields='items.track.id', additional_types=['track'])
          for tr_dict in pl_content['items']:
              tr_tmp.add(tr_dict['track']['id'])
