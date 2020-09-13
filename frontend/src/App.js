@@ -11,14 +11,20 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isLoggedIn: true,
+      isLoggedIn: false,
       user: null,
       image: null
     };
     this.handleChange = this.handleChange.bind(this);
     this.upload = this.upload.bind(this);
     this.setURL= this.setURL.bind(this);
-    this.imageURL = 'https://www.escj.org/sites/default/files/default_images/noImageUploaded.png'
+    this.setPlaylistIDs= this.setPlaylistIDs.bind(this);
+    this.get_all_playlists_ids=this.get_all_playlists_ids.bind(this);
+    this.setURL= this.setURL.bind(this);
+    this.imageURL = 'https://www.escj.org/sites/default/files/default_images/noImageUploaded.png';
+    this.playlistIDs = [];
+    this.recommendations = [];
+    this.uploaded = false;
 
 
   }
@@ -36,6 +42,24 @@ class App extends Component {
   async logout() {
     window.location.replace("http://localhost:5000/logout");
   }
+
+  get_all_playlists_ids() {
+      fetch("/get_playlists").then(response =>
+        response.json().then(data => {
+          this.setPlaylistIDs(data.items);
+        })
+      );
+    }
+
+
+
+    setPlaylistIDs(items) {
+  items.forEach(el => {
+  this.playlistIDs.push(el.id);
+})
+
+}
+
 
   async upload() {
     const uploadTask = storage
@@ -55,15 +79,20 @@ class App extends Component {
           .then((url) => {
             axios.post(`/create_playlist`, {
               image_url: url, // TODO: Pass in selected playlists
-              playlists: ["dummy"],
-            });
+              playlists: this.playlistIDs,
+            }).then(response =>
+              response.json().then(data => {
+                this.recommendations = data;
+              }))
             console.log(url);
 
             this.setURL(url);
+
           });
       }
     );
   }
+
 
 
 
@@ -73,11 +102,13 @@ class App extends Component {
         image: event.target.files[0],
       });
       console.log(this.state.image);
+      this.uploaded = true;
     }
   }
 
   async componentDidMount() {
     // TODO: Replace localhost with Firebase hosted site URL
+    this.get_all_playlists_ids();
     const params = new URLSearchParams(
       window.location.href.replace("http://localhost:3000/?", "")
     );
@@ -109,6 +140,7 @@ class App extends Component {
     let upload;
     let logo = <img src={Logo} alt='website logo' className="logo topleft"/>;
     let message;
+    let recs;
 
     if (this.state.isLoggedIn) {
       if (this.user == null) {
@@ -116,6 +148,12 @@ class App extends Component {
       } else {
         message = <p className = "message">Welcome {this.state.user.display_name}!</p>;
       }
+
+      if (this.uploaded) {
+        recs = <div className="grey padding"> <p className = "instructions">Your Recommendations</p>
+        <p className = "small">{this.recommendations}</p> </div>
+      }
+
 
       upload = (
 
@@ -126,11 +164,16 @@ class App extends Component {
           <Button style={{background: "white", "border-radius": "8px", color: "black", "font-family": "sans-serif",
 
           "font-size": "40px", top:"0px", "margin-bottom": "20px", "margin-right": "5px", "margin-left": "5px", "border": "2px solid black"}} onClick={this.upload}>Upload</Button>
+
         </div>
-        //playlist
+
+
+
         <img src={this.imageURL} alt='image' className="image bottomright"/>;
         </span>
       );
+
+
 
 
 
@@ -155,6 +198,7 @@ class App extends Component {
               {logo}
               {message}
               {upload}
+              {recs}
               {link}
             </header>
       </div>
