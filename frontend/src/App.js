@@ -60,9 +60,9 @@ class App extends Component {
             axios.post(`/create_playlist`, {
               image_url: url, // TODO: Pass in selected playlists
               playlists: ["dummy"],
-            }).then(res => {
-              this.recommendations = res.data
-              });
+            }).then(res =>
+              {this.recommendations = res.json}
+            );
             console.log(url);
 
             this.setURL(url);

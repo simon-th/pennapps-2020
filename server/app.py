@@ -158,8 +158,8 @@ def create_playlist():
 
 def sort_songs(tracks, image_danceability):
     for feature in tracks:
-        feature['danceability'] = abs(feature['danceability'] - image_danceability)
-    tracks = sorted(tracks, key=itemgetter('tempo'))
+        feature['danceability'] = abs(10*feature['danceability'] - image_danceability)
+    tracks = sorted(tracks, key=itemgetter('danceability'))
     if len(tracks) > 25:
         return [tracks[x]['uri'] for x in range(0, 25)]
     return [tracks[x]['uri'] for x in range(0, len(tracks))]
