@@ -18,9 +18,6 @@ class App extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.upload = this.upload.bind(this);
     this.setURL= this.setURL.bind(this);
-    this.setPlaylistIDs= this.setPlaylistIDs.bind(this);
-    this.get_all_playlists_ids=this.get_all_playlists_ids.bind(this);
-    this.setURL= this.setURL.bind(this);
     this.imageURL = 'https://www.escj.org/sites/default/files/default_images/noImageUploaded.png';
     this.playlistIDs = [];
     this.recommendations = [];
@@ -63,10 +60,9 @@ class App extends Component {
             axios.post(`/create_playlist`, {
               image_url: url, // TODO: Pass in selected playlists
               playlists: ["dummy"],
-            }).then(response =>
-              response.json().then(data => {
-                this.recommendations = data;
-              }))
+            }).then(res => {
+              this.recommendations = res.data
+              });
             console.log(url);
 
             this.setURL(url);
@@ -91,7 +87,7 @@ class App extends Component {
 
   async componentDidMount() {
     // TODO: Replace localhost with Firebase hosted site URL
-    this.get_all_playlists_ids();
+    // this.get_all_playlists_ids();
     const params = new URLSearchParams(
       window.location.href.replace("http://localhost:3000/?", "")
     );
