@@ -1,21 +1,18 @@
-# image and url librarie
-import urllib.request
-import PIL
-from PIL import Image
-import requests
-# Import KMeans from SciKit Learn cluster lib
-from sklearn.cluster import KMeans
-# for plotting
-import matplotlib.pyplot as plt
-# turn image into array
-import numpy as np
-# computer vision
-import cv2
-# use dictionary to count cluster members at the end
-from collections import Counter
-# use skimage to convert to hex and rgb2
-from skimage.color import rgb2lab, deltaE_cie76
 import os
+
+import urllib.request
+import requests
+import PIL
+
+import numpy as np
+import matplotlib.pyplot as plt
+import cv2
+
+from collections import Counter
+
+from PIL import Image
+from skimage.color import rgb2lab, deltaE_cie76
+from sklearn.cluster import KMeans
 
 """input: direct image url
    outupt: a danceability score and a tempo score as a 2-list"""
@@ -28,12 +25,10 @@ def image_to_color_norm(image_url):
     file.close()
 
     # set image to array read in by opencv
-    # TODO: get link from firebase
     image = cv2.imread("image.jpg") # linting issue fixed in settings
 
     # use cv2 to convert to R-G-B, default is B-R-G
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB) # convert to rgb instead of grb
-
 
     # Color Identification Section
     #converts labels from RGB to HEX
@@ -47,10 +42,10 @@ def image_to_color_norm(image_url):
 
 
     # K Means Algo: from Wikipedia:
-    # k-means clustering is a method of vector quantization, 
-    # originally from signal processing, that aims to partition 
-    # n observations into k clusters in which each observation belongs 
-    # to the cluster with the nearest mean (cluster centers or cluster centroid), 
+    # k-means clustering is a method of vector quantization,
+    # originally from signal processing, that aims to partition
+    # n observations into k clusters in which each observation belongs
+    # to the cluster with the nearest mean (cluster centers or cluster centroid),
     # serving as a prototype of the cluster
 
     # resize image so not that many pixels to iterate through:
@@ -80,15 +75,12 @@ def image_to_color_norm(image_url):
     hex_colors = [rgb_to_hex(sorted_list[i]) for i in ct.keys()]
     rgb_colors = [sorted_list[i] for i in ct.keys()]
 
-
-
-
     # tempo and dance
     # must be between 0 and 1 and 80 and 120
     # should just average the 8 sections and correspond to color
     # Step 1 : iterate through first of each 8 means, second of 8 means, 3 of 8 means
     # get "total " RGB
-    # divide by 8 
+    # divide by 8
     # norm the tempo
     r_vals = 0
     g_vals = 0
@@ -102,16 +94,14 @@ def image_to_color_norm(image_url):
     overall_color = [r_vals, g_vals, b_vals]
     # divide by number of clusters to get overall image color
     overall_color = [(overall_color[0] / 8),(overall_color[1]/8), (overall_color[2]/8)]
-    print(overall_color)
+    print('color:', overall_color)
 
     color_norm = [x / 255 for x in overall_color]
     dance_color_norm = (color_norm[0] + color_norm[1] + color_norm[2]) / 3
     tempo_color_norm = (dance_color_norm * 40) + 80
-    print(dance_color_norm, "and", tempo_color_norm)
-    return [dance_color_norm, tempo_color_norm]
+    # print(dance_color_norm, "and", tempo_color_norm)
+    return dance_color_norm, tempo_color_norm
 
-
-
-# driver code:
-image_to_color_norm("https://i.imgur.com/F7JsReR.jpeg")
-image_to_color_norm("https://i.imgur.com/R67FHau.jpg")
+if __name__ == "__main__":
+    image_to_color_norm("https://i.imgur.com/F7JsReR.jpeg")
+    image_to_color_norm("https://i.imgur.com/R67FHau.jpg")

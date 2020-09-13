@@ -1,12 +1,16 @@
 import random
 import string
-from operator import itemgetter
 import math
-from urllib.request import urlopen
 import base64
+import json
 
 import spotipy
 import spotipy.util as util
+
+from im_analysis import image_to_color_norm
+
+from operator import itemgetter
+from urllib.request import urlopen
 
 from spotipy.oauth2 import SpotifyOAuth
 from flask import Flask, redirect, request, jsonify
@@ -125,18 +129,18 @@ def create_playlist():
     if not logged_in:
         return None
 
-    all_args = request.args.to_dict()
-    image_url = all_args['image_url']   # Image URL from Firebase Storage
-    # playlists = all_args['playlists']   # List of playlist IDs #TODO: Fix this
-    playlists = []
+    data = json.loads(request.data.decode('UTF-8'))
+    image_url = data['image_url']   # Image URL from Firebase Storage
+    playlists = data['playlists']   # List of playlist IDs
+
     tracks = []
 
     # TODO: Instead of making a separate GET request for get_track_data, we can query Spotify API to get tracks from the given playlist URIs
 
     ''' Gets all track audio features from selected playlist ids'''
-    for pl_id in playlists:
-        for tr in sp.playlist_items(pl_id, fields='track.id', additional_types=['track']):
-            tracks.append(sp.audio_features(tr))
+    # for pl_id in playlists:
+    #     for tr in sp.playlist_items(pl_id, fields='track.id', additional_types=['track']):
+    #         tracks.append(sp.audio_features(tr))
 
     # TODO: Call image processing functions by passing in the URL
 
@@ -150,9 +154,11 @@ def create_playlist():
     # sp.playlist_upload_cover(playlist_id, base64.b64encode(urlopen(image_url).read()))
 
     ''' Hook up values from image analysis here '''
-    # songs = sort_songs(tracks, get_image_tempo(), get_image_danceability())
+    dance_color_norm, tempo_color_norm = image_to_color_norm(image_url)
+    # songs = sort_songs(tracks, tempo_color_norm, dance_color_norm)
     # sp.playlist_add_items(playlist_id, songs)
-    # return the playlist
+    print(dance_color_norm, tempo_color_norm)
+    return {}
 
 
 '''

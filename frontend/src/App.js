@@ -41,11 +41,10 @@ class App extends Component {
           .child(this.state.image.name)
           .getDownloadURL()
           .then((url) => {
-            const query_string = qs.stringify({
+            axios.post(`/create_playlist`, {
               image_url: url, // TODO: Pass in selected playlists
               playlists: ["dummy"],
             });
-            axios.post(`/create_playlist?${query_string}`);
             console.log(url);
           });
       }
