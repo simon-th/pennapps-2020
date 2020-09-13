@@ -4,18 +4,30 @@ import qs from "qs";
 import Button from "@material-ui/core/Button";
 import { storage } from "./firebase";
 import "./App.css";
+import Logo from './assets/logo.png';
 
 class App extends Component {
+
   constructor(props) {
     super(props);
     this.state = {
-      isLoggedIn: false,
+      isLoggedIn: true,
       user: null,
-      image: null,
+      image: null
     };
     this.handleChange = this.handleChange.bind(this);
     this.upload = this.upload.bind(this);
+    this.setURL= this.setURL.bind(this);
+    this.imageURL = 'https://www.escj.org/sites/default/files/default_images/noImageUploaded.png'
+
+
   }
+
+  setURL(url) {
+      this.imageURL = url;
+  }
+
+
 
   async login() {
     window.location.replace("http://localhost:5000/login");
@@ -46,10 +58,14 @@ class App extends Component {
               playlists: ["dummy"],
             });
             console.log(url);
+
+            //setURL(url);
           });
       }
     );
   }
+
+
 
   async handleChange(event) {
     if (event.target.files[0]) {
@@ -87,31 +103,61 @@ class App extends Component {
   }
 
   render() {
+
     let link;
     let welcome;
     let upload;
+    let logo = <img src={Logo} alt='website logo' className="logo topleft"/>;
+    let message;
 
     if (this.state.isLoggedIn) {
-      welcome = <p>Welcome {this.state.user.display_name}!</p>;
+      if (this.user == null) {
+        message = <p className = "message">Welcome Test!</p>;
+      } else {
+        message = <p className = "message">Welcome {this.state.user.display_name}!</p>;
+      }
+
       upload = (
-        <div>
-          <input type="file" onChange={this.handleChange} />;
-          <Button onClick={this.upload}>Upload</Button>;
+
+        <span>
+        <div className="grey padding">
+        <p className = "instructions">Please upload a picture to hear what it sounds like.</p>
+          <input type="file" style={{"margin": "10px 5px"}} onChange={this.handleChange} />
+          <Button style={{background: "white", "border-radius": "8px", color: "black", "font-family": "sans-serif",
+
+          "font-size": "40px", top:"0px", "margin-bottom": "20px", "margin-right": "5px", "margin-left": "5px", "border": "2px solid black"}} onClick={this.upload}>Upload</Button>
         </div>
+        <img src={this.imageURL} alt='image' className="image bottomright"/>;
+        </span>
       );
-      link = <Button onClick={this.logout}>Logout</Button>;
+
+
+
+
+
+
+
+      link = <Button style={{background: "white", "border-radius": "8px", color: "black", "font-family": "sans-serif",
+
+      "font-size": "10px", "bottom": "0px"}} onClick={this.logout}>Logout</Button>;
     } else {
-      link = <Button onClick={this.login}>Login</Button>;
+      message = <p className = "message">What does your picture sing?</p>;
+      link = <Button style={{background: "white", "border-radius": "8px", color: "black", "font-family": "sans-serif",
+
+      "font-size": "40px", top:"0px", bottom: "00px"}} onClick={this.login}>Login to Spotify♩</Button>;
     }
 
+
     return (
-      <div className="App">
-        <header className="App-header">
-          {welcome}
-          {upload}
-          {link}
-        </header>
+      <div className="background">
+            <header className="App-header center">
+              {logo}
+              {message}
+              {upload}
+              {link}
+            </header>
       </div>
+
     );
   }
 }
